@@ -1,0 +1,41 @@
+.app-nav {
+  background: var(--p-surface-card);
+  border-bottom: 1px solid var(--p-surface-border);
+  padding: 0.75rem 1rem;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.nav-inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-brand {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--p-primary-color);
+}
+
+.nav-links {
+  display: flex;
+  gap: 1.5rem;
+
+  a {
+    text-decoration: none;
+    color: var(--p-text-color-secondary);
+    font-weight: 500;
+    transition: color 0.2s;
+
+    &:hover,
+    &.active {
+      color: var(--p-primary-color);
+    }
+  }
+}
+
+main {
+  padding-top: 1.5rem;
+}
