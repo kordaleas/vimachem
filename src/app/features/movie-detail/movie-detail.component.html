@@ -1,0 +1,68 @@
+@if (loading()) {
+  <div class="detail-loading">
+    <p-progress-spinner strokeWidth="4" ariaLabel="Loading show details" />
+  </div>
+} @else if (error()) {
+  <div class="detail-error">
+    <p>{{ error() }}</p>
+    <p-button label="Go Back" icon="pi pi-arrow-left" (onClick)="goBack()" />
+  </div>
+} @else if (show(); as s) {
+  <div class="detail-container">
+    <p-button
+      label="Back"
+      icon="pi pi-arrow-left"
+      severity="secondary"
+      [text]="true"
+      class="back-btn"
+      (onClick)="goBack()"
+    />
+
+    <div class="detail-layout">
+      <aside class="detail-poster">
+        <img
+          [src]="s.image?.original ?? s.image?.medium ?? 'https://via.placeholder.com/300x450?text=No+Image'"
+          [alt]="s.name"
+          class="poster-img"
+        />
+        <p-button
+          [icon]="favStore.isFavorite(s.id) ? 'pi pi-heart-fill' : 'pi pi-heart'"
+          [label]="favStore.isFavorite(s.id) ? 'Remove from Favorites' : 'Add to Favorites'"
+          [severity]="favStore.isFavorite(s.id) ? 'danger' : 'primary'"
+          class="fav-btn"
+          (onClick)="favStore.toggleFavorite(s)"
+        />
+      </aside>
+
+      <main class="detail-info">
+        <h1 class="detail-title">{{ s.name }}</h1>
+
+        <div class="detail-meta">
+          @if (s.network) {
+            <span class="meta-item"><i class="pi pi-tv"></i> {{ s.network.name }}</span>
+          }
+          @if (s.premiered) {
+            <span class="meta-item"><i class="pi pi-calendar"></i> {{ s.premiered }}</span>
+          }
+          @if (s.runtime) {
+            <span class="meta-item"><i class="pi pi-clock"></i> {{ s.runtime }} min</span>
+          }
+          @if (s.rating.average) {
+            <span class="meta-item"><i class="pi pi-star-fill"></i> {{ s.rating.average }} / 10</span>
+          }
+        </div>
+
+        <div class="detail-genres">
+          @for (genre of s.genres; track genre) {
+            <p-tag [value]="genre" severity="secondary" />
+          }
+          <p-tag [value]="s.status" [severity]="s.status === 'Ended' ? 'danger' : 'success'" />
+        </div>
+
+        @if (s.summary) {
+          <p class="detail-summary">{{ stripHtml(s.summary) }}</p>
+        }
+      </main>
+    </div>
+  </div>
+}

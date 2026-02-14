@@ -1,8 +1,43 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
+import { Location } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
+import { Button } from 'primeng/button';
+import { Tag } from 'primeng/tag';
+import { ProgressSpinner } from 'primeng/progressspinner';
+import { ShowService } from '../../core/services/show.service';
+import { FavoritesStore } from '../favorites/store/favorites.store';
+import { Show } from '../../core/models/show.model';
 
 @Component({
   selector: 'app-movie-detail',
+  imports: [Button, Tag, ProgressSpinner],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  template: `<p>Movie detail – coming soon</p>`,
+  templateUrl: './movie-detail.component.html',
+  styleUrl: './movie-detail.component.scss',
 })
-export class MovieDetailComponent {}
+export class MovieDetailComponent implements OnInit {
+  private readonly route = inject(ActivatedRoute);
+  private readonly showService = inject(ShowService);
+  private readonly location = inject(Location);
+  readonly favStore = inject(FavoritesStore);
+
+  readonly show = signal<Show | null>(null);
+  readonly loading = signal(true);
+  readonly error = signal<string | null>(null);
+
+  ngOnInit(): void {
+    const id = Number(this.route.snapshot.paramMap.get('id'));
+    this.showService.getShowById(id).subscribe({
+      next: (s) => { this.show.set(s); this.loading.set(false); },
+      error: () => { this.error.set('Failed to load show details.'); this.loading.set(false); },
+    });
+  }
+
+  goBack(): void {
+    this.location.back();
+  }
+
+  stripHtml(html: string | null): string {
+    return html ? html.replace(/<[^>]*>/g, '') : '';
+  }
+}

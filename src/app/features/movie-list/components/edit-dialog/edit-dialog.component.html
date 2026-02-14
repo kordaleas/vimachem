@@ -1,0 +1,51 @@
+<p-dialog
+  [visible]="visible()"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  header="Edit Show"
+  styleClass="edit-dialog"
+  (onHide)="close()"
+>
+  <form [formGroup]="form" class="edit-form">
+    <div class="field">
+      <label for="edit-name">Name</label>
+      <input
+        id="edit-name"
+        type="text"
+        pInputText
+        formControlName="name"
+        class="w-full"
+        aria-required="true"
+      />
+    </div>
+
+    <div class="field">
+      <label for="edit-genres">Genres <small>(comma-separated)</small></label>
+      <input
+        id="edit-genres"
+        type="text"
+        pInputText
+        formControlName="genres"
+        class="w-full"
+        placeholder="Drama, Thriller"
+      />
+    </div>
+
+    <div class="field">
+      <label for="edit-summary">Summary</label>
+      <textarea
+        id="edit-summary"
+        pTextarea
+        formControlName="summary"
+        rows="4"
+        class="w-full"
+      ></textarea>
+    </div>
+  </form>
+
+  <ng-template #footer>
+    <p-button label="Cancel" severity="secondary" (onClick)="close()" />
+    <p-button label="Save" (onClick)="save()" [disabled]="form.invalid" />
+  </ng-template>
+</p-dialog>

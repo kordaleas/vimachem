@@ -1,0 +1,47 @@
+<div class="list-header">
+  <h1>TV Shows</h1>
+  <app-search-bar (searched)="onSearch($event)" />
+</div>
+
+@if (store.shows().length === 0 && !store.loading()) {
+  <div class="empty-state">
+    <i class="pi pi-tv" aria-hidden="true"></i>
+    <p>No shows found. Try a different search.</p>
+    @if (store.searchQuery()) {
+      <p-button label="Clear search" severity="secondary" (onClick)="onSearch('')" />
+    }
+  </div>
+}
+
+<div class="movie-grid">
+  @for (show of store.shows(); track show.id) {
+    <app-show-card
+      [show]="show"
+      [isFavorite]="favStore.isFavorite(show.id)"
+      (favoriteToggled)="onFavoriteToggled($event)"
+      (editRequested)="onEditRequested($event)"
+      (deleteRequested)="onDeleteRequested($event)"
+    />
+  }
+</div>
+
+@if (store.loading()) {
+  <div class="loading-state">
+    <p-progress-spinner strokeWidth="4" ariaLabel="Loading shows" />
+  </div>
+}
+
+@if (!store.hasMore() && store.shows().length > 0) {
+  <p class="end-of-list">You've reached the end of the list.</p>
+}
+
+<div #sentinel class="sentinel" aria-hidden="true"></div>
+
+<app-edit-dialog
+  [show]="editingShow()"
+  [visible]="editDialogVisible()"
+  (saved)="onEditSaved($event)"
+  (closed)="onEditClosed()"
+/>
+
+<p-confirm-dialog />
