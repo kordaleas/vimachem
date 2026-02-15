@@ -6,6 +6,7 @@ import { Tag } from 'primeng/tag';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { ShowService } from '../../core/services/show.service';
 import { FavoritesStore } from '../favorites/store/favorites.store';
+import { ShowListStore } from '../movie-list/store/show-list.store';
 import { Show } from '../../core/models/show.model';
 
 @Component({
@@ -20,6 +21,7 @@ export class MovieDetailComponent implements OnInit {
   private readonly showService = inject(ShowService);
   private readonly location = inject(Location);
   readonly favStore = inject(FavoritesStore);
+  private readonly showListStore = inject(ShowListStore);
 
   readonly show = signal<Show | null>(null);
   readonly loading = signal(true);
@@ -27,6 +29,12 @@ export class MovieDetailComponent implements OnInit {
 
   ngOnInit(): void {
     const id = Number(this.route.snapshot.paramMap.get('id'));
+    const localShow = this.showListStore.shows().find((s) => s.id === id);
+    if (localShow) {
+      this.show.set(localShow);
+      this.loading.set(false);
+      return;
+    }
     this.showService.getShowById(id).subscribe({
       next: (s) => { this.show.set(s); this.loading.set(false); },
       error: () => { this.error.set('Failed to load show details.'); this.loading.set(false); },
