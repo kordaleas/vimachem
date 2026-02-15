@@ -29,9 +29,15 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   providers: [ConfirmationService],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './movie-list.component.html',
-  styleUrl: './movie-list.component.scss',
+  host: {
+    '(window:beforeunload)': 'onBeforeUnload()',
+  }
 })
 export class MovieListComponent implements OnInit, OnDestroy {
+  onBeforeUnload() {
+    this.store.saveScrollPosition(0);
+  }
+
   readonly store = inject(ShowListStore);
   private readonly router = inject(Router);
 
