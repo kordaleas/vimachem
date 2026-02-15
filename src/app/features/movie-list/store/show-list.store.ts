@@ -37,6 +37,7 @@ const initialState: ShowListState = {
   isActorSearch: false,
   selectedActor: null,
   hasMore: true,
+  scrollPosition: 0,
   displayLimit: BATCH_SIZE,
   favorites: [],
 };

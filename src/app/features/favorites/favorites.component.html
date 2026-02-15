@@ -7,7 +7,7 @@
   <div class="empty-state">
     <i class="pi pi-heart" aria-hidden="true"></i>
     <p>You have no favorites yet.</p>
-    <p-button label="Browse Shows" icon="pi pi-arrow-left" routerLink="/movies" />
+    <p-button label="Browse Shows" icon="pi pi-arrow-left" (click)="goBack()" />
   </div>
 } @else {
   <div class="movie-grid">

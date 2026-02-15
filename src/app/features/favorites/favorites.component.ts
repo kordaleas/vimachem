@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { Location } from '@angular/common';
 import { RouterLink } from '@angular/router';
 import { Button } from 'primeng/button';
 import { ShowListStore } from '../movie-list/store/show-list.store';
@@ -15,6 +16,11 @@ import { Show } from '../../core/models/show.model';
 })
 export class FavoritesComponent {
   readonly store = inject(ShowListStore);
+  private readonly location = inject(Location);
+
+  goBack(): void {
+    this.location.back();
+  }
 
   readonly editingShow = signal<Show | null>(null);
   readonly editDialogVisible = signal(false);
