@@ -10,6 +10,7 @@ import Aura from '@primeuix/themes/aura';
 
 import { routes } from './app.routes';
 import { errorInterceptor } from './core/interceptors/error.interceptor';
+import { MessageService } from 'primeng/api';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -21,6 +22,7 @@ export const appConfig: ApplicationConfig = {
       withViewTransitions(),
     ),
     provideHttpClient(withInterceptors([errorInterceptor])),
+    MessageService,
     providePrimeNG({
       theme: {
         preset: Aura,
