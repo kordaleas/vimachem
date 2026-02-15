@@ -26,11 +26,11 @@
           class="poster-img"
         />
         <p-button
-          [icon]="favStore.isFavorite(s.id) ? 'pi pi-heart-fill' : 'pi pi-heart'"
-          [label]="favStore.isFavorite(s.id) ? 'Remove from Favorites' : 'Add to Favorites'"
-          [severity]="favStore.isFavorite(s.id) ? 'danger' : 'primary'"
+          [icon]="showListStore.isFavorite(s.id) ? 'pi pi-heart-fill' : 'pi pi-heart'"
+          [label]="showListStore.isFavorite(s.id) ? 'Remove from Favorites' : 'Add to Favorites'"
+          [severity]="showListStore.isFavorite(s.id) ? 'danger' : 'primary'"
           class="fav-btn"
-          (onClick)="favStore.toggleFavorite(s)"
+          (onClick)="showListStore.toggleFavorite(s.id)"
         />
       </aside>
 

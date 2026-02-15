@@ -19,7 +19,7 @@ export class MovieDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly showService = inject(ShowService);
   private readonly location = inject(Location);
-  private readonly showListStore = inject(ShowListStore);
+  readonly showListStore = inject(ShowListStore);
 
   readonly show = signal<Show | null>(null);
   readonly loading = signal(true);

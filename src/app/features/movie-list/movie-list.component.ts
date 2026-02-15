@@ -83,8 +83,8 @@ export class MovieListComponent implements OnInit, OnDestroy {
     }
   }
 
-  onFavoriteToggled(show: Show): void {
-    this.store.toggleFavorite(show);
+  onFavoriteToggled(id: number): void {
+    this.store.toggleFavorite(id);
   }
 
   onEditRequested(show: Show): void {

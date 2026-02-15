@@ -31,12 +31,12 @@
 
   <div class="card-actions">
     <p-button
-      [icon]="isFavorite() ? 'pi pi-heart-fill' : 'pi pi-heart'"
-      [severity]="isFavorite() ? 'danger' : 'secondary'"
+      [icon]="show().isFavorite ? 'pi pi-heart-fill' : 'pi pi-heart'"
+      [severity]="show().isFavorite ? 'danger' : 'secondary'"
       [rounded]="true"
       [text]="true"
-      [ariaLabel]="isFavorite() ? 'Remove from favorites' : 'Add to favorites'"
-      (onClick)="favoriteToggled.emit(show())"
+      [ariaLabel]="show().isFavorite ? 'Remove from favorites' : 'Add to favorites'"
+      (onClick)="favoriteToggled.emit(show().id)"
     />
     <p-button
       icon="pi pi-pencil"

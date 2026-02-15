@@ -26,6 +26,7 @@ export interface Show {
   image: ShowImage | null;
   summary: string | null;
   network: ShowNetwork | null;
+  isFavorite?: boolean;
 }
 
 /** Wrapper returned by TVMaze /search/shows endpoint */

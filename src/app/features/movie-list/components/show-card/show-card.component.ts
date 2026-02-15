@@ -13,9 +13,8 @@ import { Show } from '../../../../core/models/show.model';
 })
 export class ShowCardComponent {
   show = input.required<Show>();
-  isFavorite = input<boolean>(false);
 
-  favoriteToggled = output<Show>();
+  favoriteToggled = output<number>();
   editRequested = output<Show>();
   deleteRequested = output<number>();
 }

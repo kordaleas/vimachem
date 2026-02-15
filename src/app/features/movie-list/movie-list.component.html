@@ -14,7 +14,6 @@
   @for (show of store.visibleShows(); track show.id) {
     <app-show-card
       [show]="show"
-      [isFavorite]="store.isFavorite(show.id)"
       (favoriteToggled)="onFavoriteToggled($event)"
       (editRequested)="onEditRequested($event)"
       (deleteRequested)="onDeleteRequested($event)"

@@ -25,15 +25,11 @@ export class FavoritesComponent {
   readonly editingShow = signal<Show | null>(null);
   readonly editDialogVisible = signal(false);
 
-  removeFromFavorites(show: Show): void {
-    this.store.removeFavorite(show.id);
-    // Also remove from the regular shows list
-    this.store.deleteShow(show.id);
+  onFavoriteToggled(id: number): void {
+    this.store.toggleFavorite(id);
   }
 
   onDeleteRequested(id: number): void {
-    this.store.removeFavorite(id);
-    // Also remove from the regular shows list
     this.store.deleteShow(id);
   }
 
@@ -45,9 +41,7 @@ export class FavoritesComponent {
   onEditSaved(changes: Partial<Show>): void {
     const show = this.editingShow();
     if (show) {
-      // Update in both shows and favorites
       this.store.updateShow(show.id, changes);
-      this.store.addFavorite({ ...show, ...changes });
     }
     this.editDialogVisible.set(false);
     this.editingShow.set(null);
