@@ -18,7 +18,7 @@ import { FavoritesStore } from '../favorites/store/favorites.store';
 import { ShowCardComponent } from './components/show-card/show-card.component';
 import { SearchBarComponent } from './components/search-bar/search-bar.component';
 import { EditDialogComponent } from './components/edit-dialog/edit-dialog.component';
-import { Show } from '../../core/models/show.model';
+import { Person, Show } from '../../core/models/show.model';
 
 @Component({
   selector: 'app-movie-list',
@@ -73,8 +73,12 @@ export class MovieListComponent implements OnInit, OnDestroy {
     this.observer.observe(el);
   }
 
-  onSearch(query: string): void {
-    this.store.search(query);
+  onActorSelected(person: Person): void {
+    this.store.loadShowsByActor(person.id);
+  }
+
+  onSearchCleared(): void {
+    this.store.clearSearch();
     this.store.loadNextPage();
   }
 

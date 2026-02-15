@@ -1,20 +1,26 @@
 <div class="search-bar">
-  <span class="search-icon pi pi-search" aria-hidden="true"></span>
-  <input
-    #searchInput
-    type="text"
-    pInputText
-    placeholder="Search shows…"
-    class="search-input"
-    aria-label="Search shows"
-  />
-  <p-button
-    icon="pi pi-times"
-    severity="secondary"
-    [rounded]="true"
-    [text]="true"
-    size="small"
-    ariaLabel="Clear search"
-    (onClick)="clear()"
-  />
+  <p-autocomplete
+    [(ngModel)]="selectedActor"
+    [suggestions]="suggestions()"
+    optionLabel="name"
+    placeholder="Search actors…"
+    (completeMethod)="onComplete($event)"
+    (onSelect)="onSelect($event)"
+    (onClear)="clear()"
+    [showClear]="true"
+    [minLength]="2"
+    scrollHeight="300px"
+    class="search-autocomplete"
+  >
+    <ng-template #item let-person>
+      <div class="suggestion-item">
+        @if (person.image?.medium) {
+          <img [src]="person.image.medium" [alt]="person.name" class="suggestion-avatar" />
+        } @else {
+          <span class="suggestion-avatar-placeholder pi pi-user"></span>
+        }
+        <span class="suggestion-name">{{ person.name }}</span>
+      </div>
+    </ng-template>
+  </p-autocomplete>
 </div>

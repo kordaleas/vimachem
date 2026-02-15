@@ -22,7 +22,7 @@ interface ShowListState {
   shows: Show[];
   page: number;
   loading: boolean;
-  searchQuery: string;
+  isActorSearch: boolean;
   hasMore: boolean;
   scrollPosition: number;
   displayLimit: number;
@@ -32,7 +32,7 @@ const initialState: ShowListState = {
   shows: [],
   page: 0,
   loading: false,
-  searchQuery: '',
+  isActorSearch: false,
   hasMore: true,
   scrollPosition: 0,
   displayLimit: BATCH_SIZE,
@@ -51,31 +51,49 @@ export const ShowListStore = signalStore(
     loadNextPage: rxMethod<void>(
       pipe(
         tap(() => {
-          if (store.loading() || !store.hasMore()) return;
+          if (store.loading() || !store.hasMore() || store.isActorSearch()) return;
           patchState(store, { loading: true });
         }),
         switchMap(() => {
-          if (!store.hasMore()) return EMPTY;
-          const query = store.searchQuery();
-          const page = store.page();
-
-          const source$ = query
-            ? showService.searchShows(query)
-            : showService.getShows(page);
-
-          return source$.pipe(
+          if (!store.hasMore() || store.isActorSearch()) return EMPTY;
+          return showService.getShows(store.page()).pipe(
             tapResponse({
               next: (shows: Show[]) =>
                 patchState(store, (state) => ({
-                  shows: query ? shows : [...state.shows, ...shows],
-                  page: query ? state.page : state.page + 1,
-                  hasMore: query ? false : shows.length > 0,
+                  shows: [...state.shows, ...shows],
+                  page: state.page + 1,
+                  hasMore: shows.length > 0,
                   loading: false,
                 })),
               error: () => patchState(store, { loading: false }),
             }),
           );
         }),
+      ),
+    ),
+
+    loadShowsByActor: rxMethod<number>(
+      pipe(
+        tap(() => patchState(store, { loading: true, shows: [], isActorSearch: true, hasMore: false, displayLimit: BATCH_SIZE })),
+        switchMap((personId) =>
+          showService.getPersonCastCredits(personId).pipe(
+            tapResponse({
+              next: (credits) => {
+                const seen = new Set<number>();
+                const shows: Show[] = [];
+                for (const credit of credits) {
+                  const show = credit._embedded.show;
+                  if (!seen.has(show.id)) {
+                    seen.add(show.id);
+                    shows.push(show);
+                  }
+                }
+                patchState(store, { shows, loading: false });
+              },
+              error: () => patchState(store, { loading: false }),
+            }),
+          ),
+        ),
       ),
     ),
 
@@ -89,13 +107,13 @@ export const ShowListStore = signalStore(
       return store.displayLimit() >= store.shows().length && store.hasMore();
     },
 
-    search(query: string): void {
+    clearSearch(): void {
       patchState(store, {
-        searchQuery: query,
         shows: [],
         page: 0,
         hasMore: true,
         loading: false,
+        isActorSearch: false,
         displayLimit: BATCH_SIZE,
       });
     },
@@ -125,7 +143,7 @@ export const ShowListStore = signalStore(
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         try {
-          const { loading, displayLimit, ...parsed } =
+          const { loading, displayLimit, isActorSearch, ...parsed } =
             JSON.parse(saved) as ShowListState;
           patchState(store, parsed);
         } catch {
@@ -135,7 +153,7 @@ export const ShowListStore = signalStore(
 
       effect(() => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { loading, displayLimit, ...state } = getState(store);
+        const { loading, displayLimit, isActorSearch, ...state } = getState(store);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
       });
     },

@@ -1,8 +1,12 @@
 import { inject, Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { map, Observable } from 'rxjs';
+import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { Show, ShowSearchResult } from '../models/show.model';
+import {
+  CastCredit,
+  PersonSearchResult,
+  Show,
+} from '../models/show.model';
 
 @Injectable({ providedIn: 'root' })
 export class ShowService {
@@ -14,15 +18,22 @@ export class ShowService {
     return this.http.get<Show[]>(`${this.base}/shows?page=${page}`);
   }
 
-  /** Full-text search — returns all matches (not paginated) */
-  searchShows(query: string): Observable<Show[]> {
-    return this.http
-      .get<ShowSearchResult[]>(`${this.base}/search/shows?q=${encodeURIComponent(query)}`)
-      .pipe(map((results) => results.map((r) => r.show)));
-  }
-
   /** Single show detail */
   getShowById(id: number): Observable<Show> {
     return this.http.get<Show>(`${this.base}/shows/${id}`);
+  }
+
+  /** Search people by name */
+  searchPeople(query: string): Observable<PersonSearchResult[]> {
+    return this.http.get<PersonSearchResult[]>(
+      `${this.base}/search/people?q=${encodeURIComponent(query)}`,
+    );
+  }
+
+  /** Get cast credits for a person with embedded show and character */
+  getPersonCastCredits(personId: number): Observable<CastCredit[]> {
+    return this.http.get<CastCredit[]>(
+      `${this.base}/people/${personId}/castcredits?embed[]=show&embed[]=character`,
+    );
   }
 }

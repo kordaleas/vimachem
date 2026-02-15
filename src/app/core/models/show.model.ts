@@ -33,3 +33,27 @@ export interface ShowSearchResult {
   score: number;
   show: Show;
 }
+
+export interface Person {
+  id: number;
+  name: string;
+  image: ShowImage | null;
+}
+
+/** Wrapper returned by TVMaze /search/people endpoint */
+export interface PersonSearchResult {
+  score: number;
+  person: Person;
+}
+
+/** Cast credit returned by /people/:id/castcredits?embed[]=show&embed[]=character */
+export interface CastCredit {
+  _embedded: {
+    show: Show;
+    character: {
+      id: number;
+      name: string;
+      image: ShowImage | null;
+    };
+  };
+}

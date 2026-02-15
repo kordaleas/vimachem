@@ -1,15 +1,12 @@
 <div class="list-header">
   <h1>TV Shows</h1>
-  <app-search-bar (searched)="onSearch($event)" />
+  <app-search-bar (actorSelected)="onActorSelected($event)" (cleared)="onSearchCleared()" />
 </div>
 
 @if (store.visibleShows().length === 0 && !store.loading()) {
   <div class="empty-state">
     <i class="pi pi-tv" aria-hidden="true"></i>
-    <p>No shows found. Try a different search.</p>
-    @if (store.searchQuery()) {
-      <p-button label="Clear search" severity="secondary" (onClick)="onSearch('')" />
-    }
+    <p>No shows found.</p>
   </div>
 }
 

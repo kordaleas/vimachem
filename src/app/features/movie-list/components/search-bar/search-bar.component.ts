@@ -1,45 +1,58 @@
 import {
-  AfterViewInit,
   ChangeDetectionStrategy,
   Component,
-  ElementRef,
-  OnDestroy,
+  inject,
   output,
-  viewChild,
+  signal,
 } from '@angular/core';
-import { InputText } from 'primeng/inputtext';
-import { Button } from 'primeng/button';
-import { debounceTime, distinctUntilChanged, fromEvent, map, Subject, takeUntil } from 'rxjs';
+import { FormsModule } from '@angular/forms';
+import { AutoComplete, AutoCompleteCompleteEvent, AutoCompleteSelectEvent } from 'primeng/autocomplete';
+import { debounceTime, Subject, switchMap } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { ShowService } from '../../../../core/services/show.service';
+import { Person } from '../../../../core/models/show.model';
 
 @Component({
   selector: 'app-search-bar',
-  imports: [InputText, Button],
+  imports: [FormsModule, AutoComplete],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './search-bar.component.html',
   styleUrl: './search-bar.component.scss',
 })
-export class SearchBarComponent implements AfterViewInit, OnDestroy {
-  searched = output<string>();
+export class SearchBarComponent {
+  actorSelected = output<Person>();
+  cleared = output<void>();
 
-  private readonly inputRef = viewChild.required<ElementRef<HTMLInputElement>>('searchInput');
-  private readonly destroy$ = new Subject<void>();
+  readonly suggestions = signal<Person[]>([]);
+  selectedActor: Person | null = null;
 
-  ngAfterViewInit(): void {
-    fromEvent<InputEvent>(this.inputRef().nativeElement, 'input').pipe(
-      map((e) => (e.target as HTMLInputElement).value.trim()),
+  private readonly showService = inject(ShowService);
+  private readonly searchSubject = new Subject<string>();
+
+  constructor() {
+    this.searchSubject.pipe(
       debounceTime(400),
-      distinctUntilChanged(),
-      takeUntil(this.destroy$),
-    ).subscribe((query) => this.searched.emit(query));
+      switchMap((query) => this.showService.searchPeople(query)),
+      takeUntilDestroyed(),
+    ).subscribe((results) => {
+      this.suggestions.set(results.map((r) => r.person));
+    });
+  }
+
+  onComplete(event: AutoCompleteCompleteEvent): void {
+    const query = event.query.trim();
+    if (query.length > 0) {
+      this.searchSubject.next(query);
+    }
+  }
+
+  onSelect(event: AutoCompleteSelectEvent): void {
+    this.actorSelected.emit(event.value as Person);
   }
 
   clear(): void {
-    this.inputRef().nativeElement.value = '';
-    this.searched.emit('');
-  }
-
-  ngOnDestroy(): void {
-    this.destroy$.next();
-    this.destroy$.complete();
+    this.selectedActor = null;
+    this.suggestions.set([]);
+    this.cleared.emit();
   }
 }
