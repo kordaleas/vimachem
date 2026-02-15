@@ -1,9 +1,10 @@
-import { inject } from '@angular/core';
+import { computed, inject } from '@angular/core';
 import { effect } from '@angular/core';
 import {
   getState,
   patchState,
   signalStore,
+  withComputed,
   withHooks,
   withMethods,
   withState,
@@ -15,6 +16,7 @@ import { Show } from '../../../core/models/show.model';
 import { ShowService } from '../../../core/services/show.service';
 
 const STORAGE_KEY = 'vm-show-list';
+const BATCH_SIZE = 25;
 
 interface ShowListState {
   shows: Show[];
@@ -23,6 +25,7 @@ interface ShowListState {
   searchQuery: string;
   hasMore: boolean;
   scrollPosition: number;
+  displayLimit: number;
 }
 
 const initialState: ShowListState = {
@@ -32,11 +35,18 @@ const initialState: ShowListState = {
   searchQuery: '',
   hasMore: true,
   scrollPosition: 0,
+  displayLimit: BATCH_SIZE,
 };
 
 export const ShowListStore = signalStore(
   { providedIn: 'root' },
   withState(initialState),
+  withComputed((store) => ({
+    visibleShows: computed(() => store.shows().slice(0, store.displayLimit())),
+    hasMoreVisible: computed(
+      () => store.displayLimit() < store.shows().length || store.hasMore(),
+    ),
+  })),
   withMethods((store, showService = inject(ShowService)) => ({
     loadNextPage: rxMethod<void>(
       pipe(
@@ -69,6 +79,16 @@ export const ShowListStore = signalStore(
       ),
     ),
 
+    showMore(): void {
+      patchState(store, (state) => ({
+        displayLimit: state.displayLimit + BATCH_SIZE,
+      }));
+    },
+
+    needsMoreData(): boolean {
+      return store.displayLimit() >= store.shows().length && store.hasMore();
+    },
+
     search(query: string): void {
       patchState(store, {
         searchQuery: query,
@@ -76,6 +96,7 @@ export const ShowListStore = signalStore(
         page: 0,
         hasMore: true,
         loading: false,
+        displayLimit: BATCH_SIZE,
       });
     },
 
@@ -104,7 +125,8 @@ export const ShowListStore = signalStore(
       const saved = localStorage.getItem(STORAGE_KEY);
       if (saved) {
         try {
-          const { loading, ...parsed } = JSON.parse(saved) as ShowListState;
+          const { loading, displayLimit, ...parsed } =
+            JSON.parse(saved) as ShowListState;
           patchState(store, parsed);
         } catch {
           /* ignore malformed data */
@@ -113,7 +135,7 @@ export const ShowListStore = signalStore(
 
       effect(() => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { loading, ...state } = getState(store);
+        const { loading, displayLimit, ...state } = getState(store);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
       });
     },

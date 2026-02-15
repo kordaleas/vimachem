@@ -62,7 +62,10 @@ export class MovieListComponent implements OnInit, OnDestroy {
     this.observer = new IntersectionObserver(
       (entries) => {
         if (entries[0].isIntersecting && !this.store.loading()) {
-          this.store.loadNextPage();
+          this.store.showMore();
+          if (this.store.needsMoreData()) {
+            this.store.loadNextPage();
+          }
         }
       },
       { rootMargin: '200px' },

@@ -3,7 +3,7 @@
   <app-search-bar (searched)="onSearch($event)" />
 </div>
 
-@if (store.shows().length === 0 && !store.loading()) {
+@if (store.visibleShows().length === 0 && !store.loading()) {
   <div class="empty-state">
     <i class="pi pi-tv" aria-hidden="true"></i>
     <p>No shows found. Try a different search.</p>
@@ -14,7 +14,7 @@
 }
 
 <div class="movie-grid">
-  @for (show of store.shows(); track show.id) {
+  @for (show of store.visibleShows(); track show.id) {
     <app-show-card
       [show]="show"
       [isFavorite]="favStore.isFavorite(show.id)"
@@ -31,7 +31,7 @@
   </div>
 }
 
-@if (!store.hasMore() && store.shows().length > 0) {
+@if (!store.hasMoreVisible() && store.visibleShows().length > 0) {
   <p class="end-of-list">You've reached the end of the list.</p>
 }
 
