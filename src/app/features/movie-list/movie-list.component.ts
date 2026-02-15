@@ -14,7 +14,6 @@ import { ConfirmDialog } from 'primeng/confirmdialog';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { Button } from 'primeng/button';
 import { ShowListStore } from './store/show-list.store';
-import { FavoritesStore } from '../favorites/store/favorites.store';
 import { ShowCardComponent } from './components/show-card/show-card.component';
 import { SearchBarComponent } from './components/search-bar/search-bar.component';
 import { EditDialogComponent } from './components/edit-dialog/edit-dialog.component';
@@ -30,7 +29,6 @@ import { Person, Show } from '../../core/models/show.model';
 })
 export class MovieListComponent implements OnInit, OnDestroy {
   readonly store = inject(ShowListStore);
-  readonly favStore = inject(FavoritesStore);
 
   private readonly confirmationService = inject(ConfirmationService);
   private readonly sentinelRef = viewChild<ElementRef<HTMLDivElement>>('sentinel');
@@ -86,7 +84,7 @@ export class MovieListComponent implements OnInit, OnDestroy {
   }
 
   onFavoriteToggled(show: Show): void {
-    this.favStore.toggleFavorite(show);
+    this.store.toggleFavorite(show);
   }
 
   onEditRequested(show: Show): void {

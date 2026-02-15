@@ -27,6 +27,7 @@ interface ShowListState {
   hasMore: boolean;
   scrollPosition: number;
   displayLimit: number;
+  favorites: Show[];
 }
 
 const initialState: ShowListState = {
@@ -36,8 +37,8 @@ const initialState: ShowListState = {
   isActorSearch: false,
   selectedActor: null,
   hasMore: true,
-  scrollPosition: 0,
   displayLimit: BATCH_SIZE,
+  favorites: [],
 };
 
 export const ShowListStore = signalStore(
@@ -48,6 +49,8 @@ export const ShowListStore = signalStore(
     hasMoreVisible: computed(
       () => store.displayLimit() < store.shows().length || store.hasMore(),
     ),
+    favoriteIds: computed(() => new Set(store.favorites().map((s) => s.id))),
+    favoriteCount: computed(() => store.favorites().length),
   })),
   withMethods((store, showService = inject(ShowService)) => ({
     loadNextPage: rxMethod<void>(
@@ -150,6 +153,7 @@ export const ShowListStore = signalStore(
     deleteShow(id: number): void {
       patchState(store, (state) => ({
         shows: state.shows.filter((s) => s.id !== id),
+        favorites: state.favorites.filter((s) => s.id !== id),
       }));
     },
 
@@ -159,6 +163,31 @@ export const ShowListStore = signalStore(
 
     reset(): void {
       patchState(store, initialState);
+    },
+
+    addFavorite(show: Show): void {
+      if (store.favoriteIds().has(show.id)) return;
+      patchState(store, (state) => ({ favorites: [...state.favorites, show] }));
+    },
+
+    removeFavorite(id: number): void {
+      patchState(store, (state) => ({
+        favorites: state.favorites.filter((s) => s.id !== id),
+      }));
+    },
+
+    isFavorite(id: number): boolean {
+      return store.favoriteIds().has(id);
+    },
+
+    toggleFavorite(show: Show): void {
+      if (store.favoriteIds().has(show.id)) {
+        patchState(store, (state) => ({
+          favorites: state.favorites.filter((s) => s.id !== show.id),
+        }));
+      } else {
+        patchState(store, (state) => ({ favorites: [...state.favorites, show] }));
+      }
     },
   })),
   withHooks((store) => ({
@@ -175,13 +204,29 @@ export const ShowListStore = signalStore(
         }
       }
 
+      // Restore favorites from separate storage
+      const favSaved = localStorage.getItem('vm-favorites');
+      if (favSaved) {
+        try {
+          const favData = JSON.parse(favSaved) as { favorites: Show[] };
+          if (favData.favorites) {
+            patchState(store, { favorites: favData.favorites });
+          }
+        } catch {
+          /* ignore malformed data */
+        }
+      }
+
       effect(() => {
         const state = getState(store);
         // Only save when NOT in search mode, to preserve the normal list
         if (!state.isActorSearch) {
-          const { loading, displayLimit, isActorSearch, selectedActor, ...stateToSave } = state;
+          const { loading, displayLimit, isActorSearch, selectedActor, favorites, ...stateToSave } = state;
           localStorage.setItem(STORAGE_KEY, JSON.stringify(stateToSave));
         }
+        // Also save favorites separately
+        const favoritesState = { favorites: state.favorites };
+        localStorage.setItem('vm-favorites', JSON.stringify(favoritesState));
       });
     },
   })),

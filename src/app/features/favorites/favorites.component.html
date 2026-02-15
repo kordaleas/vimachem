@@ -1,6 +1,6 @@
 <div class="favorites-header">
   <h1>My Favorites</h1>
-  <span class="count">{{ store.count() }} show{{ store.count() !== 1 ? 's' : '' }}</span>
+  <span class="count">{{ store.favoriteCount() }} show{{ store.favoriteCount() !== 1 ? 's' : '' }}</span>
 </div>
 
 @if (store.favorites().length === 0) {
@@ -16,9 +16,16 @@
         [show]="show"
         [isFavorite]="true"
         (favoriteToggled)="removeFromFavorites($event)"
-        (editRequested)="store.addFavorite($event)"
-        (deleteRequested)="store.removeFavorite($event)"
+        (editRequested)="onEditRequested($event)"
+        (deleteRequested)="onDeleteRequested($event)"
       />
     }
   </div>
 }
+
+<app-edit-dialog
+  [show]="editingShow()"
+  [visible]="editDialogVisible()"
+  (saved)="onEditSaved($event)"
+  (closed)="onEditClosed()"
+/>

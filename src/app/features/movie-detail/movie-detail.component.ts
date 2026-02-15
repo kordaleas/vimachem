@@ -5,7 +5,6 @@ import { Button } from 'primeng/button';
 import { Tag } from 'primeng/tag';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { ShowService } from '../../core/services/show.service';
-import { FavoritesStore } from '../favorites/store/favorites.store';
 import { ShowListStore } from '../movie-list/store/show-list.store';
 import { Show } from '../../core/models/show.model';
 
@@ -20,7 +19,6 @@ export class MovieDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly showService = inject(ShowService);
   private readonly location = inject(Location);
-  readonly favStore = inject(FavoritesStore);
   private readonly showListStore = inject(ShowListStore);
 
   readonly show = signal<Show | null>(null);
