@@ -2,6 +2,7 @@ import {
   afterNextRender,
   ChangeDetectionStrategy,
   Component,
+  DestroyRef,
   ElementRef,
   inject,
   OnDestroy,
@@ -18,6 +19,9 @@ import { ShowCardComponent } from './components/show-card/show-card.component';
 import { SearchBarComponent } from './components/search-bar/search-bar.component';
 import { EditDialogComponent } from './components/edit-dialog/edit-dialog.component';
 import { Person, Show } from '../../core/models/show.model';
+import { NavigationStart, Router } from '@angular/router';
+import { filter } from 'rxjs';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-movie-list',
@@ -29,10 +33,12 @@ import { Person, Show } from '../../core/models/show.model';
 })
 export class MovieListComponent implements OnInit, OnDestroy {
   readonly store = inject(ShowListStore);
+  private readonly router = inject(Router);
 
   private readonly confirmationService = inject(ConfirmationService);
   private readonly sentinelRef = viewChild<ElementRef<HTMLDivElement>>('sentinel');
   private observer: IntersectionObserver | null = null;
+  private readonly destroyRef = inject(DestroyRef);
 
   readonly editingShow = signal<Show | null>(null);
   readonly editDialogVisible = signal(false);
@@ -51,6 +57,12 @@ export class MovieListComponent implements OnInit, OnDestroy {
     if (this.store.shows().length === 0) {
       this.store.loadNextPage();
     }
+
+    this.router.events
+      .pipe(filter(event => event instanceof NavigationStart), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.store.saveScrollPosition(window.scrollY);
+      });
   }
 
   private setupInfiniteScroll(): void {
@@ -115,6 +127,5 @@ export class MovieListComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.observer?.disconnect();
-    this.store.saveScrollPosition(window.scrollY);
   }
 }

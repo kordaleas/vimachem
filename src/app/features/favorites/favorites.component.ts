@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
 import { Location } from '@angular/common';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Button } from 'primeng/button';
 import { ShowListStore } from '../movie-list/store/show-list.store';
 import { ShowCardComponent } from '../movie-list/components/show-card/show-card.component';
@@ -16,10 +16,10 @@ import { Show } from '../../core/models/show.model';
 })
 export class FavoritesComponent {
   readonly store = inject(ShowListStore);
-  private readonly location = inject(Location);
+  private readonly router = inject(Router);
 
   goBack(): void {
-    this.location.back();
+    this.router.navigate(['/movies']);
   }
 
   readonly editingShow = signal<Show | null>(null);
