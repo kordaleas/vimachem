@@ -1,0 +1,20 @@
+<div class="search-bar">
+  <span class="search-icon pi pi-search" aria-hidden="true"></span>
+  <input
+    #searchInput
+    type="text"
+    pInputText
+    placeholder="Search shows…"
+    class="search-input"
+    aria-label="Search shows"
+  />
+  <p-button
+    icon="pi pi-times"
+    severity="secondary"
+    [rounded]="true"
+    [text]="true"
+    size="small"
+    ariaLabel="Clear search"
+    (onClick)="clear()"
+  />
+</div>
