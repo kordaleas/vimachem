@@ -74,12 +74,15 @@ export class MovieListComponent implements OnInit, OnDestroy {
   }
 
   onActorSelected(person: Person): void {
-    this.store.loadShowsByActor(person.id);
+    this.store.loadShowsByActor({ personId: person.id, person });
   }
 
   onSearchCleared(): void {
     this.store.clearSearch();
-    this.store.loadNextPage();
+    // If no shows were restored, load from API
+    if (this.store.shows().length === 0) {
+      this.store.loadNextPage();
+    }
   }
 
   onFavoriteToggled(show: Show): void {

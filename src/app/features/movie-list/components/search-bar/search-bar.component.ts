@@ -1,7 +1,9 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  computed,
   inject,
+  input,
   output,
   signal,
 } from '@angular/core';
@@ -23,8 +25,9 @@ export class SearchBarComponent {
   actorSelected = output<Person>();
   cleared = output<void>();
 
+  readonly storedActor = input<Person | null>(null);
   readonly suggestions = signal<Person[]>([]);
-  selectedActor: Person | null = null;
+  readonly selectedActor = computed(() => this.storedActor());
 
   private readonly showService = inject(ShowService);
   private readonly searchSubject = new Subject<string>();
@@ -50,8 +53,13 @@ export class SearchBarComponent {
     this.actorSelected.emit(event.value as Person);
   }
 
+  onActorChange(value: Person | null): void {
+    if (value === null) {
+      this.clear();
+    }
+  }
+
   clear(): void {
-    this.selectedActor = null;
     this.suggestions.set([]);
     this.cleared.emit();
   }

@@ -1,6 +1,6 @@
 <div class="list-header">
   <h1>TV Shows</h1>
-  <app-search-bar (actorSelected)="onActorSelected($event)" (cleared)="onSearchCleared()" />
+  <app-search-bar [storedActor]="store.selectedActor()" (actorSelected)="onActorSelected($event)" (cleared)="onSearchCleared()" />
 </div>
 
 @if (store.visibleShows().length === 0 && !store.loading()) {

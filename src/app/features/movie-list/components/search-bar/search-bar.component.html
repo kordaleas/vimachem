@@ -1,6 +1,7 @@
 <div class="search-bar">
   <p-autocomplete
-    [(ngModel)]="selectedActor"
+    [ngModel]="selectedActor()"
+    (ngModelChange)="onActorChange($event)"
     [suggestions]="suggestions()"
     optionLabel="name"
     placeholder="Search actors…"

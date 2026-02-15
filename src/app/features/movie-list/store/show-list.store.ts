@@ -12,7 +12,7 @@ import {
 import { rxMethod } from '@ngrx/signals/rxjs-interop';
 import { tapResponse } from '@ngrx/operators';
 import { EMPTY, pipe, switchMap, tap } from 'rxjs';
-import { Show } from '../../../core/models/show.model';
+import { Person, Show } from '../../../core/models/show.model';
 import { ShowService } from '../../../core/services/show.service';
 
 const STORAGE_KEY = 'vm-show-list';
@@ -23,6 +23,7 @@ interface ShowListState {
   page: number;
   loading: boolean;
   isActorSearch: boolean;
+  selectedActor: Person | null;
   hasMore: boolean;
   scrollPosition: number;
   displayLimit: number;
@@ -33,6 +34,7 @@ const initialState: ShowListState = {
   page: 0,
   loading: false,
   isActorSearch: false,
+  selectedActor: null,
   hasMore: true,
   scrollPosition: 0,
   displayLimit: BATCH_SIZE,
@@ -72,10 +74,10 @@ export const ShowListStore = signalStore(
       ),
     ),
 
-    loadShowsByActor: rxMethod<number>(
+    loadShowsByActor: rxMethod<{ personId: number; person: Person }>(
       pipe(
-        tap(() => patchState(store, { loading: true, shows: [], isActorSearch: true, hasMore: false, displayLimit: BATCH_SIZE })),
-        switchMap((personId) =>
+        tap(({ person }) => patchState(store, { loading: true, shows: [], isActorSearch: true, hasMore: false, displayLimit: BATCH_SIZE, selectedActor: person })),
+        switchMap(({ personId }) =>
           showService.getPersonCastCredits(personId).pipe(
             tapResponse({
               next: (credits) => {
@@ -108,12 +110,33 @@ export const ShowListStore = signalStore(
     },
 
     clearSearch(): void {
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved) {
+        try {
+          const parsed = JSON.parse(saved) as Partial<ShowListState>;
+          patchState(store, {
+            shows: parsed.shows || [],
+            page: parsed.page ?? 0,
+            hasMore: parsed.hasMore ?? true,
+            loading: false,
+            isActorSearch: false,
+            selectedActor: null,
+            displayLimit: BATCH_SIZE,
+          });
+          return;
+        } catch {
+          // localStorage is corrupted
+        }
+      }
+
+      // Fallback if localStorage is empty/corrupted
       patchState(store, {
         shows: [],
         page: 0,
         hasMore: true,
         loading: false,
         isActorSearch: false,
+        selectedActor: null,
         displayLimit: BATCH_SIZE,
       });
     },
@@ -145,16 +168,20 @@ export const ShowListStore = signalStore(
         try {
           const { loading, displayLimit, isActorSearch, ...parsed } =
             JSON.parse(saved) as ShowListState;
-          patchState(store, parsed);
+          // Restore shows and pagination, but reset search state
+          patchState(store, { ...parsed, isActorSearch: false, selectedActor: null, page: 0, hasMore: true });
         } catch {
           /* ignore malformed data */
         }
       }
 
       effect(() => {
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const { loading, displayLimit, isActorSearch, ...state } = getState(store);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+        const state = getState(store);
+        // Only save when NOT in search mode, to preserve the normal list
+        if (!state.isActorSearch) {
+          const { loading, displayLimit, isActorSearch, selectedActor, ...stateToSave } = state;
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(stateToSave));
+        }
       });
     },
   })),
