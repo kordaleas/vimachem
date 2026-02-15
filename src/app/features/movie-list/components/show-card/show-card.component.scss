@@ -1,6 +1,7 @@
 .show-card {
   display: flex;
   flex-direction: column;
+  width: 100%;
   max-width: 320px;
   border-radius: var(--p-border-radius-lg, 8px);
   background: var(--p-surface-card);

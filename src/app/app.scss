@@ -5,6 +5,8 @@
   position: sticky;
   top: 0;
   z-index: 100;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
 .nav-inner {
@@ -17,6 +19,7 @@
   font-size: 1.25rem;
   font-weight: 700;
   color: var(--p-primary-color);
+  white-space: nowrap;
 }
 
 .nav-links {
