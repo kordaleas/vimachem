@@ -1,0 +1,30 @@
+::ng-deep .edit-dialog {
+  width: min(500px, 90vw);
+}
+
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+
+  label {
+    font-weight: 600;
+    font-size: 0.875rem;
+    color: var(--p-text-color);
+
+    small {
+      font-weight: 400;
+      color: var(--p-text-color-secondary);
+    }
+  }
+}
+
+.w-full {
+  width: 100%;
+}

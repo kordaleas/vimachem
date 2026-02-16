@@ -11,6 +11,7 @@ import { Show } from '../../../../core/models/show.model';
   imports: [Dialog, Button, InputText, Textarea, ReactiveFormsModule],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './edit-dialog.component.html',
+  styleUrl: './edit-dialog.component.scss',
 })
 export class EditDialogComponent {
   show = input<Show | null>(null);
@@ -33,7 +34,7 @@ export class EditDialogComponent {
       if (s) {
         this.form.patchValue({
           name: s.name,
-          summary: s.summary ?? '',
+          summary: this.stripHtml(s.summary),
           genres: s.genres.join(', '),
         });
       }
@@ -53,5 +54,9 @@ export class EditDialogComponent {
   close(): void {
     this.form.reset();
     this.closed.emit();
+  }
+
+  private stripHtml(html: string | null): string {
+    return html ? html.replace(/<[^>]*>/g, '') : '';
   }
 }
