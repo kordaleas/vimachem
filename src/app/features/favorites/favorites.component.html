@@ -10,7 +10,7 @@
     <p-button label="Browse Shows" icon="pi pi-arrow-left" (click)="goBack()" />
   </div>
 } @else {
-  <div class="movie-grid">
+  <div class="show-grid">
     @for (show of store.favoriteShows(); track show.id) {
       <app-show-card
         [show]="show"

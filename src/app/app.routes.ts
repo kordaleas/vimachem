@@ -3,18 +3,18 @@ import { Routes } from '@angular/router';
 export const routes: Routes = [
   {
     path: '',
-    redirectTo: 'movies',
+    redirectTo: 'shows',
     pathMatch: 'full',
   },
   {
-    path: 'movies',
+    path: 'shows',
     loadComponent: () =>
-      import('./features/movie-list/movie-list.component').then((m) => m.MovieListComponent),
+      import('./features/show-list/show-list.component').then((m) => m.ShowListComponent),
   },
   {
-    path: 'movies/:id',
+    path: 'shows/:id',
     loadComponent: () =>
-      import('./features/movie-detail/movie-detail.component').then((m) => m.MovieDetailComponent),
+      import('./features/show-detail/show-detail.component').then((m) => m.ShowDetailComponent),
   },
   {
     path: 'favorites',
@@ -23,6 +23,6 @@ export const routes: Routes = [
   },
   {
     path: '**',
-    redirectTo: 'movies',
+    redirectTo: 'shows',
   },
 ];

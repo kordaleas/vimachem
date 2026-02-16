@@ -25,17 +25,17 @@ import { filter } from 'rxjs';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
-  selector: 'app-movie-list',
+  selector: 'app-show-list',
   imports: [ShowCardComponent, ActorShowCardComponent, SearchBarComponent, EditDialogComponent, ConfirmDialog, ProgressSpinner, Button],
   providers: [ConfirmationService],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './movie-list.component.html',
-  styleUrl: './movie-list.component.scss',
+  templateUrl: './show-list.component.html',
+  styleUrl: './show-list.component.scss',
   host: {
     '(window:beforeunload)': 'onBeforeUnload()',
   }
 })
-export class MovieListComponent implements OnInit, OnDestroy {
+export class ShowListComponent implements OnInit, OnDestroy {
   onBeforeUnload() {
     this.store.saveScrollPosition(0);
   }

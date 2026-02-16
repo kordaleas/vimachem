@@ -5,17 +5,17 @@ import { Button } from 'primeng/button';
 import { Tag } from 'primeng/tag';
 import { ProgressSpinner } from 'primeng/progressspinner';
 import { ShowService } from '../../core/services/show.service';
-import { ShowListStore } from '../movie-list/store/show-list.store';
+import { ShowListStore } from '../show-list/store/show-list.store';
 import { Show } from '../../core/models/show.model';
 
 @Component({
-  selector: 'app-movie-detail',
+  selector: 'app-show-detail',
   imports: [Button, Tag, ProgressSpinner],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  templateUrl: './movie-detail.component.html',
-  styleUrl: './movie-detail.component.scss',
+  templateUrl: './show-detail.component.html',
+  styleUrl: './show-detail.component.scss',
 })
-export class MovieDetailComponent implements OnInit {
+export class ShowDetailComponent implements OnInit {
   private readonly route = inject(ActivatedRoute);
   private readonly showService = inject(ShowService);
   private readonly location = inject(Location);

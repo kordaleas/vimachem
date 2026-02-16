@@ -2,9 +2,9 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 import { Location } from '@angular/common';
 import { Router, RouterLink } from '@angular/router';
 import { Button } from 'primeng/button';
-import { ShowListStore } from '../movie-list/store/show-list.store';
-import { ShowCardComponent } from '../movie-list/components/show-card/show-card.component';
-import { EditDialogComponent } from '../movie-list/components/edit-dialog/edit-dialog.component';
+import { ShowListStore } from '../show-list/store/show-list.store';
+import { ShowCardComponent } from '../show-list/components/show-card/show-card.component';
+import { EditDialogComponent } from '../show-list/components/edit-dialog/edit-dialog.component';
 import { Show } from '../../core/models/show.model';
 
 @Component({
@@ -19,7 +19,7 @@ export class FavoritesComponent {
   private readonly router = inject(Router);
 
   goBack(): void {
-    this.router.navigate(['/movies']);
+    this.router.navigate(['/shows']);
   }
 
   readonly editingShow = signal<Show | null>(null);

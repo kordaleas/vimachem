@@ -55,16 +55,16 @@ src/app/
     models/             # Show, ShowSearchResult, Person, CastCredit interfaces
     services/           # ShowService — TVMaze API wrapper
   features/
-    movie-list/
+    show-list/
       components/       # ShowCard, ActorShowCard, SearchBar, EditDialog
       store/            # ShowListStore (shows, favorites, scroll, pagination)
-      movie-list.component.ts
-    movie-detail/
-      movie-detail.component.ts
+      show-list.component.ts
+    show-detail/
+      show-detail.component.ts
     favorites/
       favorites.component.ts
   app.config.ts         # Zoneless CD, router, HTTP interceptors, PrimeNG theme
-  app.routes.ts         # Lazy-loaded routes: /movies, /movies/:id, /favorites
+  app.routes.ts         # Lazy-loaded routes: /shows, /shows/:id, /favorites
 ```
 
 ### Routing
@@ -73,8 +73,8 @@ All feature routes are lazy-loaded via `loadComponent`:
 
 | Route | Component | Description |
 |---|---|---|
-| `/movies` | MovieListComponent | Infinite-scroll show list with search, edit, delete |
-| `/movies/:id` | MovieDetailComponent | Show detail page |
+| `/shows` | ShowListComponent | Infinite-scroll show list with search, edit, delete |
+| `/shows/:id` | ShowDetailComponent | Show detail page |
 | `/favorites` | FavoritesComponent | User's favorite shows |
 
 ### State Management

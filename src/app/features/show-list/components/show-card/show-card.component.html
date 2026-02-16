@@ -1,5 +1,5 @@
 <article class="show-card">
-  <a [routerLink]="['/movies', show().id]" class="card-poster-link">
+  <a [routerLink]="['/shows', show().id]" class="card-poster-link">
     <img
       class="card-poster"
       [src]="show().image?.medium ?? 'https://via.placeholder.com/210x295?text=No+Image'"
@@ -10,7 +10,7 @@
 
   <div class="card-body">
     <h3 class="card-title">
-      <a [routerLink]="['/movies', show().id]">{{ show().name }}</a>
+      <a [routerLink]="['/shows', show().id]">{{ show().name }}</a>
     </h3>
 
     <div class="card-genres">
