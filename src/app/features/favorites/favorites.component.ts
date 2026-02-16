@@ -9,7 +9,7 @@ import { Show } from '../../core/models/show.model';
 
 @Component({
   selector: 'app-favorites',
-  imports: [ShowCardComponent, Button, RouterLink, EditDialogComponent],
+  imports: [ShowCardComponent, Button, EditDialogComponent],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './favorites.component.html',
   styleUrl: './favorites.component.scss',
