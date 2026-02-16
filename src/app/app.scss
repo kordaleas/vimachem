@@ -1,3 +1,10 @@
+/* Layout shell */
+.app-container {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
 .app-nav {
   background: var(--p-surface-card);
   border-bottom: 1px solid var(--p-surface-border);

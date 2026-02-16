@@ -5,12 +5,21 @@
   flex-wrap: wrap;
   gap: 1rem;
   margin-bottom: 1rem;
+  margin-top: 1rem;
 
   h1 {
     margin: 0;
     font-size: 1.75rem;
     font-weight: 700;
   }
+}
+
+.movie-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1.5rem;
+  padding: 1.5rem 0;
+  justify-items: center;
 }
 
 .empty-state {

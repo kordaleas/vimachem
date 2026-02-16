@@ -29,6 +29,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
   providers: [ConfirmationService],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './movie-list.component.html',
+  styleUrl: './movie-list.component.scss',
   host: {
     '(window:beforeunload)': 'onBeforeUnload()',
   }

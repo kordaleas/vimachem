@@ -1,7 +1,7 @@
-<div class="list-header">
+<header class="list-header">
   <h1>TV Shows</h1>
   <app-search-bar [storedActor]="store.selectedActor()" (actorSelected)="onActorSelected($event)" (cleared)="onSearchCleared()" />
-</div>
+</header>
 
 @if (store.visibleShows().length === 0 && !store.loading()) {
   <div class="empty-state">
@@ -10,7 +10,7 @@
   </div>
 }
 
-<div class="movie-grid">
+<section class="movie-grid">
   @for (show of store.visibleShows(); track show.id) {
     <app-show-card
       [show]="show"
@@ -19,7 +19,7 @@
       (deleteRequested)="onDeleteRequested($event)"
     />
   }
-</div>
+</section>
 
 @if (store.loading()) {
   <div class="loading-state">
