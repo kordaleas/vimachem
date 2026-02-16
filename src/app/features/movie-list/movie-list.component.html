@@ -3,23 +3,52 @@
   <app-search-bar [storedActor]="store.selectedActor()" (actorSelected)="onActorSelected($event)" (cleared)="onSearchCleared()" />
 </header>
 
-@if (store.visibleShows().length === 0 && !store.loading()) {
-  <div class="empty-state">
-    <i class="pi pi-tv" aria-hidden="true"></i>
-    <p>No shows found.</p>
-  </div>
-}
-
-<section class="movie-grid">
-  @for (show of store.visibleShows(); track show.id) {
-    <app-show-card
-      [show]="show"
-      (favoriteToggled)="onFavoriteToggled($event)"
-      (editRequested)="onEditRequested($event)"
-      (deleteRequested)="onDeleteRequested($event)"
-    />
+@if (store.isActorSearch()) {
+  @if (store.selectedActor(); as actor) {
+    <div class="actor-info">
+      @if (actor.image; as img) {
+        <img [src]="img.medium" [alt]="actor.name" class="actor-photo" />
+      } @else {
+        <span class="actor-photo-placeholder pi pi-user"></span>
+      }
+      <div class="actor-details">
+        <h2 class="actor-name">{{ actor.name }}</h2>
+        <p class="actor-shows-count">{{ store.actorShows().length }} show{{ store.actorShows().length !== 1 ? 's' : '' }}</p>
+      </div>
+    </div>
   }
-</section>
+
+  @if (store.visibleActorShows().length === 0 && !store.loading()) {
+    <div class="empty-state">
+      <i class="pi pi-tv" aria-hidden="true"></i>
+      <p>No shows found for this actor.</p>
+    </div>
+  }
+
+  <section class="actor-shows-grid">
+    @for (show of store.visibleActorShows(); track show.id) {
+      <app-actor-show-card [show]="show" />
+    }
+  </section>
+} @else {
+  @if (store.visibleShows().length === 0 && !store.loading()) {
+    <div class="empty-state">
+      <i class="pi pi-tv" aria-hidden="true"></i>
+      <p>No shows found.</p>
+    </div>
+  }
+
+  <section class="movie-grid">
+    @for (show of store.visibleShows(); track show.id) {
+      <app-show-card
+        [show]="show"
+        (favoriteToggled)="onFavoriteToggled($event)"
+        (editRequested)="onEditRequested($event)"
+        (deleteRequested)="onDeleteRequested($event)"
+      />
+    }
+  </section>
+}
 
 @if (store.loading()) {
   <div class="loading-state">

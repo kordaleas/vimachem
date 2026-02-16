@@ -1,0 +1,29 @@
+<article class="actor-show-card">
+  <div class="card-poster-wrap">
+    <img
+      class="card-poster"
+      [src]="show().image?.medium ?? 'https://via.placeholder.com/210x295?text=No+Image'"
+      [alt]="show().name"
+      loading="lazy"
+    />
+  </div>
+
+  <div class="card-body">
+    <h4 class="card-title">{{ show().name }}</h4>
+
+    <div class="card-genres">
+      @for (genre of show().genres.slice(0, 2); track genre) {
+        <p-tag [value]="genre" severity="secondary" />
+      }
+    </div>
+
+    <div class="card-meta">
+      @if (show().rating.average) {
+        <span class="rating">{{ show().rating.average }}</span>
+      }
+      <span class="status" [class.ended]="show().status === 'Ended'">
+        {{ show().status }}
+      </span>
+    </div>
+  </div>
+</article>

@@ -20,6 +20,7 @@ const BATCH_SIZE = 25;
 
 interface ShowListState {
   shows: Show[];
+  actorShows: Show[];
   page: number;
   loading: boolean;
   isActorSearch: boolean;
@@ -31,6 +32,7 @@ interface ShowListState {
 
 const initialState: ShowListState = {
   shows: [],
+  actorShows: [],
   page: 0,
   loading: false,
   isActorSearch: false,
@@ -45,9 +47,13 @@ export const ShowListStore = signalStore(
   withState(initialState),
   withComputed((store) => ({
     visibleShows: computed(() => store.shows().slice(0, store.displayLimit())),
-    hasMoreVisible: computed(
-      () => store.displayLimit() < store.shows().length || store.hasMore(),
-    ),
+    visibleActorShows: computed(() => store.actorShows().slice(0, store.displayLimit())),
+    hasMoreVisible: computed(() => {
+      if (store.isActorSearch()) {
+        return store.displayLimit() < store.actorShows().length;
+      }
+      return store.displayLimit() < store.shows().length || store.hasMore();
+    }),
     favoriteShows: computed(() => store.shows().filter((s) => s.isFavorite)),
     favoriteCount: computed(() => store.shows().filter((s) => s.isFavorite).length),
   })),
@@ -78,21 +84,21 @@ export const ShowListStore = signalStore(
 
     loadShowsByActor: rxMethod<{ personId: number; person: Person }>(
       pipe(
-        tap(({ person }) => patchState(store, { loading: true, shows: [], isActorSearch: true, hasMore: false, displayLimit: BATCH_SIZE, selectedActor: person })),
+        tap(({ person }) => patchState(store, { loading: true, actorShows: [], isActorSearch: true, hasMore: false, displayLimit: BATCH_SIZE, selectedActor: person })),
         switchMap(({ personId }) =>
           showService.getPersonCastCredits(personId).pipe(
             tapResponse({
               next: (credits) => {
                 const seen = new Set<number>();
-                const shows: Show[] = [];
+                const actorShows: Show[] = [];
                 for (const credit of credits) {
                   const show = credit._embedded.show;
                   if (!seen.has(show.id)) {
                     seen.add(show.id);
-                    shows.push(show);
+                    actorShows.push(show);
                   }
                 }
-                patchState(store, { shows, loading: false });
+                patchState(store, { actorShows, loading: false });
               },
               error: () => patchState(store, { loading: false }),
             }),
@@ -108,32 +114,13 @@ export const ShowListStore = signalStore(
     },
 
     needsMoreData(): boolean {
+      if (store.isActorSearch()) return false;
       return store.displayLimit() >= store.shows().length && store.hasMore();
     },
 
     clearSearch(): void {
-      const saved = localStorage.getItem(STORAGE_KEY);
-      if (saved) {
-        try {
-          const parsed = JSON.parse(saved) as Partial<ShowListState>;
-          patchState(store, {
-            shows: parsed.shows || [],
-            page: parsed.page ?? 0,
-            hasMore: parsed.hasMore ?? true,
-            loading: false,
-            isActorSearch: false,
-            selectedActor: null,
-            displayLimit: BATCH_SIZE,
-          });
-          return;
-        } catch {
-          /* ignore */
-        }
-      }
       patchState(store, {
-        shows: [],
-        page: 0,
-        hasMore: true,
+        actorShows: [],
         loading: false,
         isActorSearch: false,
         selectedActor: null,
@@ -190,7 +177,7 @@ export const ShowListStore = signalStore(
         const state = getState(store);
         if (!state.isActorSearch) {
           // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const { loading, displayLimit, isActorSearch, selectedActor, ...stateToSave } = state;
+          const { loading, displayLimit, isActorSearch, selectedActor, actorShows, ...stateToSave } = state;
           localStorage.setItem(STORAGE_KEY, JSON.stringify(stateToSave));
         }
       });

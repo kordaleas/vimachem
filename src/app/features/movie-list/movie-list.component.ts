@@ -16,6 +16,7 @@ import { ProgressSpinner } from 'primeng/progressspinner';
 import { Button } from 'primeng/button';
 import { ShowListStore } from './store/show-list.store';
 import { ShowCardComponent } from './components/show-card/show-card.component';
+import { ActorShowCardComponent } from './components/actor-show-card/actor-show-card.component';
 import { SearchBarComponent } from './components/search-bar/search-bar.component';
 import { EditDialogComponent } from './components/edit-dialog/edit-dialog.component';
 import { Person, Show } from '../../core/models/show.model';
@@ -25,7 +26,7 @@ import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 
 @Component({
   selector: 'app-movie-list',
-  imports: [ShowCardComponent, SearchBarComponent, EditDialogComponent, ConfirmDialog, ProgressSpinner, Button],
+  imports: [ShowCardComponent, ActorShowCardComponent, SearchBarComponent, EditDialogComponent, ConfirmDialog, ProgressSpinner, Button],
   providers: [ConfirmationService],
   changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './movie-list.component.html',

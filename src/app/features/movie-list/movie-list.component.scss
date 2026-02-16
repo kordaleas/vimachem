@@ -50,3 +50,57 @@
 .sentinel {
   height: 1px;
 }
+
+.actor-info {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.5rem 0;
+  border-bottom: 1px solid var(--p-surface-border);
+  margin-bottom: 1rem;
+}
+
+.actor-photo {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.actor-photo-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--p-surface-200, #e5e7eb);
+  color: var(--p-text-color-secondary);
+  font-size: 2rem;
+}
+
+.actor-details {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.actor-name {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.actor-shows-count {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--p-text-color-secondary);
+}
+
+.actor-shows-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 1rem;
+  padding: 1rem 0;
+  justify-items: center;
+}
